@@ -1,0 +1,6 @@
+# text editors
+*~
+.*.sw*
+
+# build folder
+build/
