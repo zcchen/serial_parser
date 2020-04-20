@@ -1,0 +1,6 @@
+INSTALL(
+    DIRECTORY ./
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
+    )
+
