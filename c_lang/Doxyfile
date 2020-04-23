@@ -1,0 +1,11 @@
+PROJECT_NAME           = "main"
+PROJECT_NUMBER         = ..
+STRIP_FROM_PATH        = /home/zcchen/github/zcchen/serial_parser/c_lang \
+                         /home/zcchen/github/zcchen/serial_parser/c_lang/build
+INPUT                  =  \
+                         /home/zcchen/github/zcchen/serial_parser/c_lang \
+                         /home/zcchen/github/zcchen/serial_parser/c_lang/build
+FILE_PATTERNS          = inc/*.h \
+                         src/*.c
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = 

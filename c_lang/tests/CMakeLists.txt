@@ -10,6 +10,7 @@ FOREACH(_test_file IN LISTS src_tests)
     ADD_EXECUTABLE(test_${_prg_filename} "${_src_filename}")
     TARGET_INCLUDE_DIRECTORIES(test_${_prg_filename} PUBLIC "${PROJECT_SOURCE_DIR}/inc")
     TARGET_LINK_LIBRARIES(test_${_prg_filename} PRIVATE ${PROJECT_NAME})
+    TARGET_COMPILE_OPTIONS(test_${_prg_filename} PRIVATE $<$<CONFIG:Debug>:DEBUG_BUILD>)
 
     ADD_TEST(NAME test_${_prg_filename} COMMAND test_${_prg_filename})
 ENDFOREACH()

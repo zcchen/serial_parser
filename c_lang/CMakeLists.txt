@@ -33,6 +33,19 @@ ENDIF ()
 
 ######################## Building Dependanies Settings ###############
 INCLUDE(cmake/cpack.cmake)
+FIND_PACKAGE(Doxygen REQUIRED dot)
+SET(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
+SET(doxyfile ${PROJECT_SOURCE_DIR}/Doxyfile)
+SET(doxyfile_in ${PROJECT_SOURCE_DIR}/Doxyfile.in)
+CONFIGURE_FILE(${doxyfile_in} ${doxyfile} @ONLY)
+ADD_CUSTOM_TARGET(docs
+                  COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+                  WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
+                  COMMENT "Generating API documentation with Doxygen"
+                  DEPENDS build_docs_dirs
+                  VERBATIM)
+ADD_CUSTOM_TARGET(build_docs_dirs
+                  COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIRECTORY})
 ######################################################################
 
 ######################## Running Dependanies Settings ################
