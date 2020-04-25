@@ -11,11 +11,13 @@ int test_serial_encoder(char *payload_for_test)
     uint8_t buff[256];
     size_t payload_len = strlen(payload_for_test);
     int ret = serial_encode((uint8_t*)payload_for_test, buff, payload_len);
-    printf("Encoded msg: \n");
+
+    printf(">>> Encoded msg: \n");
     for (int i = 0; i < ret; ++i) {
         printf("encoded_msg[%d]: 0x%x.\n", i, buff[i]);
     }
     printf("-------------\n");
+
     if (buff[0] != SERIAL_PARSER_HEADER) {
         return 1;
     }
@@ -38,24 +40,52 @@ int test_serial_encoder(char *payload_for_test)
     return 0;
 }
 
-int test_serial_decoder_correct(char *payload_for_test)
+int test_serial_decoder_correct(char *payload_for_test, int msg_len_diff)
 {
     uint8_t encoded_msg[256];
     uint8_t decoded_msg[256];
     size_t payload_len = strlen(payload_for_test);
     int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
-    int ret = serial_decode((uint8_t*)encoded_msg, decoded_msg, msg_len);
-    if (ret == payload_len) {
-        return 0;
+
+    printf(">>> Encoded msg: \n");
+    for (int i = 0; i < msg_len; ++i) {
+        printf("encoded_msg[%d]: 0x%x.\n", i, encoded_msg[i]);
+    }
+    printf("-------------\n");
+
+    int ret = serial_decode((uint8_t*)encoded_msg, decoded_msg, msg_len + msg_len_diff, 0);
+
+    printf(">>> Decoded msg: \n");
+    for (int i = 0; i < ret; ++i) {
+        printf("decoded_msg[%d]: 0x%x.\n", i, decoded_msg[i]);
+    }
+    printf("-------------\n");
+
+    if (msg_len_diff >= 0) {
+        printf("<-- More / just-enough msg is given than expected.\n");
+        if (ret == payload_len) {
+            return 0;
+        }
+        else {
+            return ret;
+        }
     }
     else {
-        return ret;
+        printf("<-- Fewer msg is given than expected.\n");
+        if (ret == SERIAL_MSG_ERR_NOT_COMPLETED) {
+            return 0;
+        }
+        else {
+            return ret;
+        }
     }
 }
 
 int main(void)
 {
     TEST_RETURN(test_serial_encoder("123456789"));
-    TEST_RETURN(test_serial_decoder_correct("123456789"));
+    TEST_RETURN(test_serial_decoder_correct("123456789", 0));
+    TEST_RETURN(test_serial_decoder_correct("", 1));
+    TEST_RETURN(test_serial_decoder_correct("", -1));
     return 0;
 }
