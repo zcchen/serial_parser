@@ -7,6 +7,7 @@
     int r = ret;                                                    \
     if (r) {                                                        \
         printf("Error on <%s> at line: %d.\n", __FILE__, __LINE__); \
+        printf("Function returns <%d>\n", r);                       \
         return r;                                                   \
     }                                                               \
 }

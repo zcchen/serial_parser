@@ -9,10 +9,9 @@ Protocol
 | name          |   bit     |   comments                                |
 |---------------|-----------|-------------------------------------------|
 | header        |   0       | 0x01 - 0xFF                               |
-| length        |   1       | Including the crc bits                    |
+| length        |   1       | The length from next byte to the end      |
 | payload       |   N       | user defined.                             |
 | crc           |   2       | the crc for above bits, including header  |
-| end           |   1       | 0x01 - 0xFF, optional                     |
 
 NOTE: All data are in little endian.
 
