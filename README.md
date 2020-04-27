@@ -6,7 +6,7 @@ This is a project to decode the parse the common serial commands in C / Python /
 
 Protocol
 -------------------------------------
-| name          |   bit     |   comments                                |
+| name          |   byte    |   comments                                |
 |---------------|-----------|-------------------------------------------|
 | header        |   0       | 0x01 - 0xFF                               |
 | length        |   1       | The length from next byte to the end      |
