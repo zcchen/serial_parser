@@ -33,11 +33,21 @@ int _serial_check(const uint8_t *msg, size_t msg_len, size_t max_msglen)
     if (*the_header != SERIAL_PARSER_HEADER) {
         return SERIAL_MSG_ERR_HEADER_UNMATCHED;
     }
-    if (max_msglen > 0 && *the_len + 2 > max_msglen) {
-        return SERIAL_MSG_ERR_HEADER_FAKED;
-    };
-    if (*the_len + 2 > msg_len) {
-        return SERIAL_MSG_ERR_NOT_COMPLETED;
+    if (max_msglen > 0) {
+        if (*the_len + 2 > max_msglen) {
+            return SERIAL_MSG_ERR_HEADER_FAKED;
+        }
+        else {
+            ; // goto crc checking to confirm.
+        }
+    }
+    else {
+        if (*the_len + 2 > msg_len) {
+            return SERIAL_MSG_ERR_NOT_COMPLETED;
+        }
+        else {
+            ; // goto crc checking to confirm.
+        }
     }
     the_crc.c[0] = *(msg + 1 + *the_len - 1);
     the_crc.c[1] = *(msg + 1 + *the_len - 0);
@@ -67,19 +77,27 @@ int serial_decode(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_
 int serial_find(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_msglen)
 {
     size_t i = 0;
+    int ret = 0;
     while (i < msg_len) {
-        if (*(msg + i) == SERIAL_PARSER_HEADER) {
-            int found_len;
-            found_len = _serial_check(msg, msg_len - i, max_msglen);
-            if (found_len >= 0) {
-                break;
-            }
-            else {
-                ; // TODO
+        int checking_ret = _serial_check( (msg + i), msg_len, max_msglen);
+        if (checking_ret > 0) { // found some msg, go to copy section.
+            goto COPY_FOUND_RET;
+        }
+        else {
+            switch (checking_ret) {
+                case SERIAL_MSG_ERR_HEADER_UNMATCHED:
+                case SERIAL_MSG_ERR_HEADER_FAKED:
+                case SERIAL_MSG_ERR_CRC:
+                    break;
+                case SERIAL_MSG_ERR_NOT_COMPLETED:
+                    goto COPY_FOUND_RET;
+                default:
+                    return -1;
             }
         }
+        i ++;
     }
-    int ret = 0;
+COPY_FOUND_RET:
     for (int j = 0; j < msg_len - i; ++j) {
         *(dest + j) = *(msg + j);
         ret ++;
