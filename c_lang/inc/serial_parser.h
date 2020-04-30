@@ -9,10 +9,11 @@
 #define SERIAL_PARSER_HEADER 'S'
 
 enum serial_msg_error_t {
-    SERIAL_MSG_ERR_HEADER_UNMATCHED = -1,
-    SERIAL_MSG_ERR_CRC = -2,
-    SERIAL_MSG_ERR_HEADER_FAKED = -3,
-    SERIAL_MSG_ERR_NOT_COMPLETED = -4,
+    SERIAL_MSG_ERR_UNKNOWN = -1,
+    SERIAL_MSG_ERR_HEADER_UNMATCHED = -2,
+    SERIAL_MSG_ERR_CRC = -3,
+    SERIAL_MSG_ERR_HEADER_FAKED = -4,
+    SERIAL_MSG_ERR_NOT_COMPLETED = -5,
 };
 
 //! \brief serial_encode()  The encoding function from payload to msg
@@ -31,8 +32,9 @@ int serial_encode(const uint8_t *payload, uint8_t *dest, size_t len);
 int serial_decode(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_msglen);
 
 
-//! \return msg_copy_bytes  The bytes copied to *dest, negative num means errors
-int serial_find(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_msglen);
+//! \return msg_copy_bytes  The bytes copied to *dest_this, negative num means errors
+int serial_find(const uint8_t *msg, uint8_t *dest_this, uint8_t *dest_rest,
+                size_t msg_len, size_t max_msglen);
 
 static inline uint16_t local2serial_16(uint16_t num)
 {

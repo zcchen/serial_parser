@@ -74,14 +74,26 @@ int serial_decode(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_
     }
 }
 
-int serial_find(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_msglen)
+int serial_find(const uint8_t *msg, uint8_t *dest_this, uint8_t *dest_rest,
+                size_t msg_len, size_t max_msglen)
 {
-    size_t i = 0;
+    int first_header_index = 0;
     int ret = 0;
-    while (i < msg_len) {
-        int checking_ret = _serial_check( (msg + i), msg_len, max_msglen);
+    int checking_ret = 0;
+    while (first_header_index < msg_len) {
+        checking_ret = _serial_check(msg + first_header_index,
+                                     msg_len - first_header_index, max_msglen);
         if (checking_ret > 0) { // found some msg, go to copy section.
-            goto COPY_FOUND_RET;
+            for (int i = 0; i < msg_len - first_header_index; ++i) {
+                if (i < checking_ret) {
+                    *(dest_this + i) = *(msg + first_header_index + i);
+                    ret ++;
+                }
+                else {
+                    *(dest_rest + i - checking_ret) = *(msg + first_header_index + i);
+                }
+            }
+            return ret;
         }
         else {
             switch (checking_ret) {
@@ -90,18 +102,22 @@ int serial_find(const uint8_t *msg, uint8_t *dest, size_t msg_len, size_t max_ms
                 case SERIAL_MSG_ERR_CRC:
                     break;
                 case SERIAL_MSG_ERR_NOT_COMPLETED:
-                    goto COPY_FOUND_RET;
+                    for (int i = 0; i < msg_len - first_header_index; ++i) {
+                        *(dest_this + i) = *(msg + first_header_index + i);
+                        ret ++;
+                    }
+                    return ret ++;
                 default:
-                    return -1;
+                    return SERIAL_MSG_ERR_UNKNOWN;
             }
         }
-        i ++;
+        first_header_index ++;
     }
-COPY_FOUND_RET:
-    for (int j = 0; j < msg_len - i; ++j) {
-        *(dest + j) = *(msg + j);
-        ret ++;
+    if (ret >= 0) {
+        return ret;
     }
-    return ret;
+    else {
+        return checking_ret;
+    }
 }
 

@@ -6,10 +6,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int test_serial_encoder(char *payload_for_test)
+#define MAX_BUFF_SIZE 256
+
+int test_serial_encode__matched(const char *payload_for_test)
 {
-    printf("\n========= encode testing =========\n");
-    uint8_t buff[256];
+    printf("\n========= serial_encode() testing =========\n");
+    uint8_t buff[MAX_BUFF_SIZE];
     size_t payload_len = strlen(payload_for_test);
     int ret = serial_encode((uint8_t*)payload_for_test, buff, payload_len);
 
@@ -41,11 +43,11 @@ int test_serial_encoder(char *payload_for_test)
     return 0;
 }
 
-int test_serial_decoder_correct(char *payload_for_test)
+int test_serial_decode__correct(const char *payload_for_test)
 {
-    printf("\n======= correct decode testing ========\n");
-    uint8_t encoded_msg[256];
-    uint8_t decoded_msg[256];
+    printf("\n======= serial_decode() testing correct ========\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t decoded_msg[MAX_BUFF_SIZE];
     size_t payload_len = strlen(payload_for_test);
     int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
 
@@ -71,12 +73,41 @@ int test_serial_decoder_correct(char *payload_for_test)
     }
 }
 
-int test_serial_decoder_header_unmatched(char *payload_for_test)
+int test_serial_decode__correct_but_overmore(const char *payload_for_test)
 {
-    printf("\n======= header unmatched decode testing ========\n");
-    uint8_t encoded_msg[256];
-    uint8_t decoded_msg[256];
-    uint8_t msg_for_testing[256];
+    printf("\n======= serial_decode() testing correct but overmore ========\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t decoded_msg[MAX_BUFF_SIZE];
+    uint8_t msg_for_testing[MAX_BUFF_SIZE];
+    size_t payload_len = strlen(payload_for_test);
+    int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
+
+    size_t offset_index = 1;
+    memcpy(msg_for_testing, encoded_msg, msg_len);
+    msg_for_testing[msg_len] = 'a';
+
+    printf(">>> Encoded msg: \n");
+    for (int i = 0; i < msg_len + offset_index; ++i) {
+        printf("encoded_msg[%d]: 0x%x.\n", i, msg_for_testing[i]);
+    }
+    printf("-------------\n");
+
+    int ret = serial_decode((uint8_t*)msg_for_testing, decoded_msg, msg_len + offset_index, 0);
+
+    if (ret == payload_len) {
+        return 0;
+    }
+    else {
+        return ret;
+    }
+}
+
+int test_serial_decode__header_unmatched(const char *payload_for_test)
+{
+    printf("\n======= serial_decode() testing: header unmatched ========\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t decoded_msg[MAX_BUFF_SIZE];
+    uint8_t msg_for_testing[MAX_BUFF_SIZE];
     size_t payload_len = strlen(payload_for_test);
     int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
 
@@ -100,12 +131,12 @@ int test_serial_decoder_header_unmatched(char *payload_for_test)
     }
 }
 
-int test_serial_decoder_crc_err(char *payload_for_test)
+int test_serial_decode__crc_err(const char *payload_for_test)
 {
-    printf("\n======= CRC-error decode testing ========\n");
-    uint8_t encoded_msg[256];
-    uint8_t decoded_msg[256];
-    uint8_t msg_for_testing[256];
+    printf("\n======= serial_decode() testing: CRC error ========\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t decoded_msg[MAX_BUFF_SIZE];
+    uint8_t msg_for_testing[MAX_BUFF_SIZE];
     size_t payload_len = strlen(payload_for_test);
     int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
 
@@ -128,12 +159,12 @@ int test_serial_decoder_crc_err(char *payload_for_test)
     }
 }
 
-int test_serial_decoder_header_faked_with_max_msglen(char *payload_for_test)
+int test_serial_decode__header_faked_with_max_msglen(const char *payload_for_test)
 {
-    printf("\n======= header faked testing ========\n");
-    uint8_t encoded_msg[256];
-    uint8_t decoded_msg[256];
-    uint8_t msg_for_testing[256];
+    printf("\n======= serial_decode() testing: faked header ========\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t decoded_msg[MAX_BUFF_SIZE];
+    uint8_t msg_for_testing[MAX_BUFF_SIZE];
     size_t payload_len = strlen(payload_for_test);
     int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
 
@@ -160,13 +191,14 @@ int test_serial_decoder_header_faked_with_max_msglen(char *payload_for_test)
     }
 }
 
-int test_serial_decoder_msg_uncomplete_because_header_faked_without_max_msglen(
-        char *payload_for_test)
+int test_serial_decode__msg_uncomplete_because_header_faked_without_max_msglen(
+        const char *payload_for_test)
 {
-    printf("\n======= msg uncompleted (header faked without max msglen) testing ========\n");
-    uint8_t encoded_msg[256];
-    uint8_t decoded_msg[256];
-    uint8_t msg_for_testing[256];
+    printf("\n======= serial_decode() test ===============\n");
+    printf(">>> expect: msg uncompleted (header faked without max msglen)\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t decoded_msg[MAX_BUFF_SIZE];
+    uint8_t msg_for_testing[MAX_BUFF_SIZE];
     size_t payload_len = strlen(payload_for_test);
     int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
 
@@ -194,14 +226,65 @@ int test_serial_decoder_msg_uncomplete_because_header_faked_without_max_msglen(
     }
 }
 
+int test_serial_find__found_1st_msg(const char* payload_for_test)
+{
+    printf("\n======= serial_find() test ========\n");
+    printf(">>> expect to find the 1st msg with noisy headers & enders\n");
+    uint8_t encoded_msg[MAX_BUFF_SIZE];
+    uint8_t msg_for_testing[MAX_BUFF_SIZE];
+    size_t payload_len = strlen(payload_for_test);
+    int msg_len = serial_encode((uint8_t*)payload_for_test, encoded_msg, payload_len);
+
+    size_t offset_index = 2;
+    msg_for_testing[0] = 'a';
+    msg_for_testing[1] = 'b';
+    memcpy(msg_for_testing + offset_index, encoded_msg, msg_len);
+    msg_for_testing[msg_len + offset_index] = 'c';
+    msg_for_testing[msg_len + offset_index + 1] = 'd';
+    printf(">>> msg for testing: \n");
+    for (int i = 0; i < msg_len + 2 * offset_index; ++i) {
+        printf("encoded_msg[%d]: 0x%x.\n", i, msg_for_testing[i]);
+    }
+    printf("-------------\n");
+
+    uint8_t dest_this[MAX_BUFF_SIZE];
+    uint8_t dest_rest[MAX_BUFF_SIZE];
+    for (int i = 0; i < MAX_BUFF_SIZE; ++i) {
+        dest_this[i] = '\0';
+        dest_rest[i] = '\0';
+    }
+
+    int ret = serial_find(msg_for_testing, dest_this, dest_rest, msg_len + 2 * offset_index, 0);
+
+    printf(">>> dest this msg: \n");
+    for (int i = 0; i < msg_len + 2 * offset_index; ++i) {
+        printf("dest_this[%d]: 0x%x.\n", i, dest_this[i]);
+    }
+    printf("-------------\n");
+    printf(">>> dest rest msg: \n");
+    for (int i = 0; i < msg_len + 2 * offset_index; ++i) {
+        printf("dest_rest[%d]: 0x%x.\n", i, dest_rest[i]);
+    }
+    printf("-------------\n");
+
+    if (ret == msg_len) {
+        return 0;
+    }
+    else {
+        return ret;
+    }
+}
+
 int main(void)
 {
-    TEST_RETURN(test_serial_encoder("123456789"));
-    TEST_RETURN(test_serial_decoder_correct("123456789"));
-    TEST_RETURN(test_serial_decoder_header_unmatched("123456789"));
-    TEST_RETURN(test_serial_decoder_crc_err("123456789"));
-    TEST_RETURN(test_serial_decoder_header_faked_with_max_msglen("123456789"));
-    TEST_RETURN(test_serial_decoder_msg_uncomplete_because_header_faked_without_max_msglen(
+    TEST_RETURN(test_serial_encode__matched("123456789"));
+    TEST_RETURN(test_serial_decode__correct("123456789"));
+    TEST_RETURN(test_serial_decode__correct_but_overmore("123456789"));
+    TEST_RETURN(test_serial_decode__header_unmatched("123456789"));
+    TEST_RETURN(test_serial_decode__crc_err("123456789"));
+    TEST_RETURN(test_serial_decode__header_faked_with_max_msglen("123456789"));
+    TEST_RETURN(test_serial_decode__msg_uncomplete_because_header_faked_without_max_msglen(
                 "123456789"));
+    TEST_RETURN(test_serial_find__found_1st_msg("123456789"));
     return 0;
 }
