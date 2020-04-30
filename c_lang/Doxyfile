@@ -1,4 +1,4 @@
-PROJECT_NAME           = "main"
+PROJECT_NAME           = "SerialParser"
 PROJECT_NUMBER         = ..
 STRIP_FROM_PATH        = /home/zcchen/github/zcchen/serial_parser/c_lang \
                          /home/zcchen/github/zcchen/serial_parser/c_lang/build
