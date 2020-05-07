@@ -1,9 +1,9 @@
 #ifndef SERIAL_PARSER_H
 #define SERIAL_PARSER_H
 
+#include "misc/endian_helper.h"
 #include <stdint.h>
 #include <stdlib.h>
-#include "endian_helper.h"
 
 //! \brief SERIAL_PARSER_HEADER is to define the header char
 #define SERIAL_PARSER_HEADER 'S'
