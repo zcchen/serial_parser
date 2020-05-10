@@ -70,7 +70,13 @@ int get_command_from_payload(const uint8_t* payload, const size_t payload_size,
     }
     *cmd_got = payload[0];
     if (payload_size == 1) {
-        return COMMAND_HANLDER_OK;
+        param_struct = NULL;
+        if (param_size == 0) {
+            return COMMAND_HANLDER_OK;
+        }
+        else {
+            return COMMAND_HANLDER_ERR_SIZE_UNMATCHED;
+        }
     }
     else {
         int r = _shadow_serialhex_2_struct(payload + 1, payload_size - 1,
