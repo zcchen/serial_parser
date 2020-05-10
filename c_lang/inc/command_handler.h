@@ -31,21 +31,17 @@ int add_command(const uint8_t cmd_num, COMMAND_FUNC_T func_ptr);
 
 int clean_commands(void);
 
-// #define a macro for easy-to-use
-#define get_command_from_payload(payload, payload_size, cmd_uint, ret_struct)    \
-        __shadow_get_command_from_payload(payload, payload_size,        \
-                                          &cmd_uint, &ret_struct, sizeof(ret_struct))
-
 /*
- * // #define a macro for easy-to-use
- *#define run_command(func_ret, cmd_index, param_struct)            \
- *        __run_command(funct_ret, cmd_index, &param_struct, sizeof(param_struct))
+ *    // #define a macro for easy-to-use
+ *#define get_command_from_payload(payload, payload_size, cmd_got, param_struct)    \
+ *        __shadow_get_command_from_payload(payload, payload_size,        \
+ *                                          &cmd_got, &param_struct, sizeof(param_struct))
  */
 
 int run_command(int *func_ret, const uint8_t cmd_index,
                const void *param_struct, const size_t param_size);
 
-int __shadow_get_command_from_payload(const uint8_t* payload, const size_t payload_size,
-                                      uint8_t *cmd, void *param_struct, size_t param_size);
+int get_command_from_payload(const uint8_t* payload, const size_t payload_size,
+                             uint8_t *cmd_got, void *param_struct, size_t param_size);
 
 #endif /* ifndef COMMAND_HANLDER_H */

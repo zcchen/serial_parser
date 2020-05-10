@@ -62,15 +62,21 @@ int add_command(const uint8_t cmd_num, COMMAND_FUNC_T func_ptr)
     return conv__enumkv_err__2__command_handler_err(ret);
 }
 
-int __shadow_get_command_from_payload(const uint8_t* payload, const size_t payload_size,
-                                      uint8_t *cmd, void *param_struct, size_t param_size)
+int get_command_from_payload(const uint8_t* payload, const size_t payload_size,
+                             uint8_t *cmd_got, void *param_struct, size_t param_size)
 {
     if (payload_size < 1) {
         return COMMAND_HANLDER_ERR_CMD_MISSING;
     }
-    *cmd = payload[0];
-    int r = _shadow_serialhex_2_struct(payload + 1, payload_size - 1, &param_struct, param_size);
-    return conv__serialhex2structr__2__command_handler_err(r);
+    *cmd_got = payload[0];
+    if (payload_size == 1) {
+        return COMMAND_HANLDER_OK;
+    }
+    else {
+        int r = _shadow_serialhex_2_struct(payload + 1, payload_size - 1,
+                                           &param_struct, param_size);
+        return conv__serialhex2structr__2__command_handler_err(r);
+    }
 }
 
 int run_command(int *func_ret, const uint8_t cmd_index,
