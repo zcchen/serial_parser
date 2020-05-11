@@ -42,6 +42,7 @@ inline static int conv__serialhex2structr__2__command_handler_err(enum serialhex
         case SERIALHEX_2_STRUCT_OK: return COMMAND_HANLDER_OK;
         case SERIALHEX_2_STRUCT_ERR_EMPTY_INPUT: return COMMAND_HANLDER_ERR_EMPTY_INPUT;
         case SERIALHEX_2_STRUCT_ERR_SIZE_UNMATCHED: return COMMAND_HANLDER_ERR_SIZE_UNMATCHED;
+        case SERIALHEX_2_STRUCT_ERR_COPY_FAILED: return COMMAND_HANLDER_ERR_COPY_FAILED;
         default: return COMMAND_HANLDER_ERR_UNKNOWN;
     }
 }
@@ -80,7 +81,7 @@ int get_command_from_payload(const uint8_t* payload, const size_t payload_size,
     }
     else {
         int r = _shadow_serialhex_2_struct(payload + 1, payload_size - 1,
-                                           &param_struct, param_size);
+                                           param_struct, param_size);
         return conv__serialhex2structr__2__command_handler_err(r);
     }
 }

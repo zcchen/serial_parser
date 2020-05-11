@@ -11,6 +11,7 @@ enum serialhex_2_struct_err_t {
     SERIALHEX_2_STRUCT_ERR_UNKNOWN = 1,
     SERIALHEX_2_STRUCT_ERR_EMPTY_INPUT = 2,
     SERIALHEX_2_STRUCT_ERR_SIZE_UNMATCHED = 3,
+    SERIALHEX_2_STRUCT_ERR_COPY_FAILED = 4,
 };
 
 int _shadow_serialhex_2_struct(const uint8_t *data, const size_t data_len,

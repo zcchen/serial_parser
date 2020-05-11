@@ -22,6 +22,7 @@ enum command_handler_err_t {
     COMMAND_HANLDER_ERR_EMPTY_INPUT = 7,
     COMMAND_HANLDER_ERR_SIZE_UNMATCHED = 8,
     COMMAND_HANLDER_ERR_CMD_MISSING = 9,
+    COMMAND_HANLDER_ERR_COPY_FAILED = 10,
 };
 
 typedef int (*COMMAND_FUNC_T)(const void*, const size_t);
