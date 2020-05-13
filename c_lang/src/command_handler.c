@@ -47,7 +47,7 @@ inline static int conv__serialhex2structr__2__command_handler_err(enum serialhex
     }
 }
 
-int add_command(const uint8_t cmd_num, COMMAND_FUNC_T func_ptr)
+int command_handler__add(const uint8_t cmd_num, COMMAND_FUNC_T func_ptr)
 {
     if (!command_list_init_flag) {
         command_list_init();
@@ -89,6 +89,7 @@ int get_command_from_payload(const uint8_t* payload, const size_t payload_size,
 int run_command(int *func_ret, const uint8_t cmd_index,
                 const void *param_struct, const size_t param_size)
 {
+    *func_ret = 0;
     if (!command_list_init_flag) {
         command_list_init();
     }
@@ -103,5 +104,24 @@ int run_command(int *func_ret, const uint8_t cmd_index,
     }
     *func_ret = func_ptr(param_struct, param_size);
     return COMMAND_HANLDER_OK;
+}
+
+void command_handler__exec(const uint8_t* payload, const size_t payload_size,
+                           uint8_t *cmd_got, int *exec_ret, int *cmd_func_ret)
+{
+    *cmd_got = 0;
+    *exec_ret = COMMAND_HANLDER_ERR_UNKNOWN;
+    *cmd_func_ret = 0;
+
+    if (payload_size < 1) {
+        *exec_ret = COMMAND_HANLDER_ERR_CMD_MISSING;
+    }
+    *cmd_got = payload[0];
+    if (payload_size == 1) {
+        *exec_ret = run_command(cmd_func_ret, *cmd_got, NULL, 0);
+    }
+    else {
+        *exec_ret = run_command(cmd_func_ret, *cmd_got, payload + 1, payload_size - 1);
+    }
 }
 

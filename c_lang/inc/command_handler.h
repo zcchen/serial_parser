@@ -28,21 +28,12 @@ enum command_handler_err_t {
 typedef int (*COMMAND_FUNC_T)(const void*, const size_t);
 
 // once you added a command, it should not be redefined again.
-int add_command(const uint8_t cmd_num, COMMAND_FUNC_T func_ptr);
+int command_handler__add(const uint8_t cmd_num, COMMAND_FUNC_T func_ptr);
 
-int clean_commands(void);
-
-/*
- *    // #define a macro for easy-to-use
- *#define get_command_from_payload(payload, payload_size, cmd_got, param_struct)    \
- *        __shadow_get_command_from_payload(payload, payload_size,        \
- *                                          &cmd_got, &param_struct, sizeof(param_struct))
- */
-
-int run_command(int *func_ret, const uint8_t cmd_index,
-               const void *param_struct, const size_t param_size);
-
-int get_command_from_payload(const uint8_t* payload, const size_t payload_size,
-                             uint8_t *cmd_got, void *param_struct, size_t param_size);
+//! param: cmd_got The cmd decoded from the payload.
+//! param: exec_ret The return code from the executed function.
+//! param: cmd_func_ret The return code from the function pointer which is added by `add()` interface
+void command_handler__exec(const uint8_t* payload, const size_t payload_size,
+                           uint8_t *cmd_got, int *exec_ret, int *cmd_func_ret);
 
 #endif /* ifndef COMMAND_HANLDER_H */
