@@ -13,7 +13,9 @@ Protocol
 | payload       |   N       | user defined.                             |
 | crc           |   2       | the crc for above bits, including header  |
 
-NOTE: All data are in little endian.
+NOTE:
+1. All data are in little endian.
+2. CRC, 0x8005
 
 What Problems Will Be Solved
 ------------------------------------
