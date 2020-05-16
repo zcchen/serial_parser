@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5)
 INCLUDE(cmake/settings.cmake)
 SET(DEBUG FALSE)
 SET(RELEASE FALSE)
-SET(PROJECT_NAME main)
+SET(PROJECT_NAME SerialParser)
 SET(PROJECT_VERSION_MAJOR 0)
 SET(PROJECT_VERSION_MINOR 1)
 SET(PROJECT_VERSION_PATCH 0)
@@ -33,6 +33,19 @@ ENDIF ()
 
 ######################## Building Dependanies Settings ###############
 INCLUDE(cmake/cpack.cmake)
+FIND_PACKAGE(Doxygen REQUIRED dot)
+SET(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
+SET(doxyfile ${PROJECT_SOURCE_DIR}/Doxyfile)
+SET(doxyfile_in ${PROJECT_SOURCE_DIR}/Doxyfile.in)
+CONFIGURE_FILE(${doxyfile_in} ${doxyfile} @ONLY)
+ADD_CUSTOM_TARGET(docs
+                  COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+                  WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
+                  COMMENT "Generating API documentation with Doxygen"
+                  DEPENDS build_docs_dirs
+                  VERBATIM)
+ADD_CUSTOM_TARGET(build_docs_dirs
+                  COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIRECTORY})
 ######################################################################
 
 ######################## Running Dependanies Settings ################
