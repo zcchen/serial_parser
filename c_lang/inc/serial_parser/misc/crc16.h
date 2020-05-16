@@ -1,8 +1,9 @@
 #ifndef SERIAL_PARSER_CRC16_H
 #define SERIAL_PARSER_CRC16_H
 
-#include <stdint.h>
 #include <stdlib.h>
+#include <stdint.h>
+typedef unsigned char uint8_t;
 
 /* Implements the standard CRC-16:
  *   Width 16

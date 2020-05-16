@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 
+######################## Path Settings ###############################
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+MESSAGE(">>> CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+######################################################################
+
 ######################## Global CMake Flags Here #####################
 INCLUDE(cmake/settings.cmake)
 SET(DEBUG FALSE)
@@ -13,10 +18,6 @@ project( ${PROJECT_NAME}
         VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
         LANGUAGES C
     )
-
-######################## Path Settings ###############################
-SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${PROJECT_SOURCE_DIR}/cmake")
-######################################################################
 
 ######################## Compiler Flags Settings #####################
 IF (${DEBUG} AND ${RELEASE})
@@ -35,8 +36,8 @@ ENDIF ()
 INCLUDE(cmake/cpack.cmake)
 FIND_PACKAGE(Doxygen REQUIRED dot)
 SET(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
-SET(doxyfile ${PROJECT_SOURCE_DIR}/Doxyfile)
-SET(doxyfile_in ${PROJECT_SOURCE_DIR}/Doxyfile.in)
+SET(doxyfile ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+SET(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
 CONFIGURE_FILE(${doxyfile_in} ${doxyfile} @ONLY)
 ADD_CUSTOM_TARGET(docs
                   COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}

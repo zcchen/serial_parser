@@ -1,4 +1,4 @@
-#include "serial_parser.h"
+#include "serial_parser/serial_parser.h"
 #include "testing_helper.h"
 #include <stdint.h>
 

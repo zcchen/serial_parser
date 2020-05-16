@@ -1,5 +1,5 @@
 #include "testing_helper.h"
-#include "command_handler.h"
+#include "serial_parser/command_handler.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

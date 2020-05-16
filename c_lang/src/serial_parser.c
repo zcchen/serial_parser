@@ -1,5 +1,5 @@
-#include "serial_parser.h"
-#include "misc/crc16.h"
+#include "serial_parser/serial_parser.h"
+#include "serial_parser/misc/crc16.h"
 
 int serial_encode(const uint8_t *payload, uint8_t *dest, size_t len)
 {

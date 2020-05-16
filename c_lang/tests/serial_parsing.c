@@ -1,5 +1,5 @@
-#include "serial_parser.h"
-#include "misc/crc16.h"
+#include "serial_parser/serial_parser.h"
+#include "serial_parser/misc/crc16.h"
 #include "testing_helper.h"
 #include <stdint.h>
 #include <string.h>
